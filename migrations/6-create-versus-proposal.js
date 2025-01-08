@@ -2,11 +2,14 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Battles', {
+    await queryInterface.createTable('VersusProposals', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
+        type: Sequelize.INTEGER
+      },
+      userId: {
         type: Sequelize.INTEGER
       },
       entity1Id: {
@@ -15,32 +18,22 @@ module.exports = {
       entity2Id: {
         type: Sequelize.INTEGER
       },
-      durationHours: {
-        type: Sequelize.INTEGER
-      },
-      endTime: {
-        type: Sequelize.DATE
-      },
-      winnerId: {
-        type: Sequelize.INTEGER
-      },
       status: {
         type: Sequelize.STRING
       },
-      createdById: {
-        type: Sequelize.INTEGER
-      },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
-      }
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
+      },
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Battles');
+    await queryInterface.dropTable('VersusProposals');
   }
 };

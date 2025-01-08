@@ -20,6 +20,9 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'Vote',
+    timestamps: false,
+    paranoid: true,  // Soft delete
+    underscored: false
   });
   return Vote;
 };

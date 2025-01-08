@@ -1,6 +1,6 @@
 const express = require('express');
 const dotenv = require('dotenv');
-const routes = require('./routes');  // Index des routes
+const routes = require('./routes'); // Index des routes
 const { connectToDatabase } = require('./config/db');  // Connexion DB
 const errorHandler = require('./middlewares/errorHandler');  // Middleware global pour gérer les erreurs
 
@@ -9,7 +9,7 @@ const app = express();
 app.use(express.json());
 
 // Validation des variables d'environnement
-const requiredEnv = ['DB_NAME', 'DB_USER', 'DB_PASSWORD', 'DB_HOST', 'DB_PORT'];
+const requiredEnv = ['DB_NAME', 'DB_USER', 'DB_PASSWORD', 'DB_HOST', 'DB_PORT', 'SECRET_KEY'];
 requiredEnv.forEach((envVar) => {
   if (!process.env[envVar]) {
     console.error(`Erreur : ${envVar} n'est pas défini dans le fichier .env`);

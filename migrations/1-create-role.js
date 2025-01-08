@@ -15,19 +15,21 @@ module.exports = {
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
-      }
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
+      },
     });
 
     // Insérer des rôles par défaut
     await queryInterface.bulkInsert('Roles', [
-      { name: 'user', createdAt: new Date(), updatedAt: new Date() },
-      { name: 'admin', createdAt: new Date(), updatedAt: new Date() },
-      { name: 'premium', createdAt: new Date(), updatedAt: new Date() }
+      { name: 'user' },
+      { name: 'admin' },
+      { name: 'premium'}
     ]);
   },
   async down(queryInterface, Sequelize) {

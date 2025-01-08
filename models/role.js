@@ -19,6 +19,9 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'Role',
+    timestamps: false,
+    paranoid: true,  // Soft delete
+    underscored: false
   });
 
   return Role;

@@ -1,7 +1,6 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { User } = require('../models');
-const SECRET_KEY = 'supersecretkey';
 
 const validatePassword = (password) => {
   const length = password.length >= 8;
@@ -72,7 +71,7 @@ const login = async (req, res) => {
       return res.status(400).json({ message: 'Identifiants incorrects.' });
     }
 
-    const token = jwt.sign({ id: user.id, username: user.username }, SECRET_KEY, { expiresIn: '1h' });
+    const token = jwt.sign({ id: user.id, username: user.username }, process.env.SECRET_KEY, { expiresIn: '1h' });
 
     res.json({
       message: 'Connexion réussie.',

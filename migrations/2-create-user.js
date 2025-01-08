@@ -1,6 +1,9 @@
 'use strict';
+const bcrypt = require('bcrypt');
+
 module.exports = {
   async up(queryInterface, Sequelize) {
+    // Création de la table Users
     await queryInterface.createTable('Users', {
       id: {
         allowNull: false,
@@ -60,14 +63,28 @@ module.exports = {
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
-      }
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
+      },
     });
+
+    // Insertion de l'administrateur
+    await queryInterface.bulkInsert('Users', [{
+      username: 'admin',
+      password: '$2b$10$0A2v8Swa44a2p1zbpTSa/e17pXgl6P/XfSeFCwCeITQw8wCKnnbwG',
+      email: 'admin@cultbrawl.com',
+      firstname: 'Super',
+      lastname: 'Admin',
+      roleId: 2, 
+      acceptedCGV: true,
+    }]);
   },
+  
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('Users');
   }
