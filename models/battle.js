@@ -104,7 +104,7 @@ module.exports = (sequelize, DataTypes) => {
       modelName: 'Battle',
       tableName: 'Battles',
       timestamps: false,
-      paranoid: true, // Soft delete
+      paranoid: true, 
       underscored: false,
     }
   );
@@ -119,7 +119,7 @@ module.exports = (sequelize, DataTypes) => {
           where: {
             status: 'pending',
             endTime: {
-              [Op.lt]: now, // Utilisation correcte de Op
+              [Op.lt]: now,
             },
           },
         }

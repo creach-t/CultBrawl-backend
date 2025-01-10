@@ -7,5 +7,7 @@ router.get('/', battleController.getAllBattles);
 router.get('/:id', battleController.getBattleById);
 router.put('/:id', battleController.updateBattle);
 router.delete('/:id', battleController.deleteBattle);
+router.post('/:id/vote', battleController.voteForEntity);
+router.get('/:id/votes', battleController.getVotesForBattle);
 
 module.exports = router;

@@ -1,4 +1,4 @@
-const { Battle, Entity, User } = require('../models');
+const { Battle, Entity, User, Vote } = require('../models');
 
 const battleController = {
   // Créer une nouvelle bataille
@@ -39,8 +39,8 @@ async getAllBattles(req, res) {
     try {
       const battles = await Battle.findAll({
         include: [
-          { model: Entity, as: 'Entity1', attributes: ['name'] },
-          { model: Entity, as: 'Entity2', attributes: ['name'] }
+          { model: Entity, as: 'Entity1' },
+          { model: Entity, as: 'Entity2' }
         ],
         order: [['createdAt', 'DESC']]
       });
@@ -50,7 +50,7 @@ async getAllBattles(req, res) {
         id: battle.id,
         title: `${battle.Entity1.name} vs ${battle.Entity2.name}`,
         category: battle.Entity1.type,
-        participants: [battle.Entity1.name, battle.Entity2.name],
+        participants: [battle.Entity1, battle.Entity2],
         status: battle.status
       }));
 
@@ -129,7 +129,73 @@ async getAllBattles(req, res) {
       console.error('Erreur lors de la suppression de la bataille:', error);
       res.status(500).json({ message: 'Erreur serveur lors de la suppression de la bataille.' });
     }
+  },
+
+  async getVotesForBattle(req, res) {
+    const { id } = req.params; // ID de la bataille
+    try {
+      // Vérifie que la bataille existe
+      const battle = await Battle.findByPk(id, {
+        include: [
+          { model: Entity, as: 'Entity1' },
+          { model: Entity, as: 'Entity2' },
+        ],
+      });
+  
+      if (!battle) {
+        return res.status(404).json({ message: 'Battle non trouvée.' });
+      }
+  
+      // Récupère les votes pour la bataille
+      const votes = await Vote.findAll({ where: { battleId: id } });
+  
+      // Compte les votes pour chaque entité
+      const entity1Votes = votes.filter((vote) => vote.votedEntityId === battle.entity1Id).length;
+      const entity2Votes = votes.filter((vote) => vote.votedEntityId === battle.entity2Id).length;
+  
+      res.status(200).json({
+        entity1Votes,
+        entity2Votes,
+      });
+    } catch (error) {
+      console.error('Erreur lors de la récupération des votes :', error);
+      res.status(500).json({ message: 'Erreur serveur lors de la récupération des votes.' });
+    }
+  },
+
+  // Voter pour une entité dans une bataille
+  async voteForEntity(req, res) {
+    try {
+      const { id } = req.params;
+      const { votedEntityId, userId } = req.body;
+
+      const battle = await Battle.findByPk(id);
+      if (!battle) {
+        return res.status(404).json({ message: 'Bataille non trouvée.' });
+      }
+      console.log('entity : ', votedEntityId);
+      const entity = await Entity.findByPk(votedEntityId);
+      if (!entity) {
+        return res.status(404).json({ message: "L'entité n'existe pas." });
+      }
+
+      if (battle.status !== 'pending') {
+        return res.status(400).json({ message: 'La bataille est terminée ou annulée.' });
+      }
+
+      // Voter
+      await Vote.create({
+        battleId: id,
+        userId,
+        votedEntityId,
+      });
+  
+      res.status(200).json({ message: 'Vote enregistré avec succès.' });
+
+    } catch (error) {
+      console.error('Erreur lors du vote pour une entité:', error);
+      res.status(500).json({ message: 'Erreur serveur lors du vote pour une entité.' });
+    }
   }
 };
-
 module.exports = battleController;
