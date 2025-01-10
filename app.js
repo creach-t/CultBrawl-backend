@@ -1,8 +1,10 @@
 const express = require('express');
 const dotenv = require('dotenv');
-const routes = require('./routes'); // Index des routes
-const { connectToDatabase } = require('./config/db');  // Connexion DB
-const errorHandler = require('./middlewares/errorHandler');  // Middleware global pour gérer les erreurs
+const routes = require('./routes');
+const { connectToDatabase } = require('./config/db');
+const errorHandler = require('./middlewares/errorHandler');
+require('./tasks/updateBattles');
+
 
 dotenv.config();
 const app = express();
