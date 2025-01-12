@@ -1,4 +1,6 @@
-const { Entity } = require('../models');
+const { Entity, Vote } = require('../models');
+const Sequelize = require('sequelize');
+
 
 // Ajouter une nouvelle entité
 const addEntity = async (req, res) => {
@@ -46,16 +48,40 @@ const getAllEntities = async (req, res) => {
   }
 };
 
-// Récupérer toutes les entités
-const getAllEntitiesByPoints = async (req, res) => {
-  try {
-    const entities = await Entity.findAll();
-    res.json('[TO-DO]: Récupérer toutes les entités par points');
-  } catch (error) {
-    console.error('TODO :', error);
-    res.status(500).json({ message: 'Erreur serveur.' });
-  }
-};
+
+  const getTop5EntityByVotes = async (req, res) => {
+    try {
+      const topEntities = await Vote.findAll({
+        attributes: [
+          'votedEntityId',
+          [Sequelize.fn('COUNT', Sequelize.col('votedEntityId')), 'voteCount'],
+        ],
+        group: ['votedEntityId', 'VotedEntity.id'], // Group by l'id de l'entité votée et de l'association
+        order: [[Sequelize.literal('"voteCount"'), 'DESC']], // Utilise des guillemets doubles pour l'alias
+        limit: 5,
+        include: [
+          {
+            model: Entity,
+            as: 'VotedEntity', // Correspond à l'alias défini dans le modèle
+            attributes: ['id', 'name', 'type', 'imageUrl'],
+          },
+        ],
+      });
+
+      const formattedTopEntities = topEntities.map((entity) => ({
+        id: entity.votedEntityId,
+        name: entity.VotedEntity.name,
+        type: entity.VotedEntity.type,
+        imageUrl: entity.VotedEntity.imageUrl,
+        votes: parseInt(entity.dataValues.voteCount, 10), // Convertir en entier
+      }));
+
+      res.status(200).json(formattedTopEntities);
+    } catch (error) {
+      console.error('Erreur lors de la récupération des entités les plus votées :', error);
+      res.status(500).json({ message: 'Erreur serveur lors de la récupération des entités les plus votées.' });
+    }
+  };
 
 // Récupérer une entité par son ID
 const getEntityById = async (req, res) => {
@@ -98,5 +124,5 @@ module.exports = {
   getAllEntities,
   getEntityById,
   deleteEntity,
-  getAllEntitiesByPoints,
+  getTop5EntityByVotes,
 };

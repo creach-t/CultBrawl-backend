@@ -1,6 +1,7 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const routes = require('./routes');
+const path = require('path');
 const { connectToDatabase } = require('./config/db');
 const errorHandler = require('./middlewares/errorHandler');
 require('./tasks/updateBattles');
@@ -21,6 +22,9 @@ requiredEnv.forEach((envVar) => {
 
 // Connexion à la base de données
 connectToDatabase();
+
+const uploadsDir = path.join(__dirname, 'uploads'); // Chemin vers le dossier des fichiers uploadés
+app.use('/uploads', express.static(uploadsDir)); // Les fichiers seront accessibles à /uploads/<filename>
 
 // Monter les routes
 app.use('/api', routes);

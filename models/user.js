@@ -77,6 +77,20 @@ module.exports = (sequelize, DataTypes) => {
           msg: "Le rôle est obligatoire."
         }
       }
+    },
+    points: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0,
+      validate: {
+        isInt: {
+          msg: "Les points doivent être un nombre entier."
+        },
+        min: {
+          args: [0],
+          msg: "Les points ne peuvent pas être négatifs."
+        }
+      }
     }
   }, {
     sequelize,

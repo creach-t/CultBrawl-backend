@@ -85,3 +85,17 @@ exports.deleteUser = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+// Récupérer 5 meilleurs utilisateurs en termes de points
+exports.getTop5UsersByPoints = async (req, res) => {
+  try {
+    const topUsers = await User.findAll({
+      order: [['points', 'DESC']],
+      limit: 5
+    });
+
+    res.status(200).json(topUsers);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};

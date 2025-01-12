@@ -16,14 +16,14 @@ module.exports = {
         allowNull: false,
         unique: true,
         validate: {
-          len: [3, 50]  // Longueur entre 3 et 50 caractères
+          len: [3, 50] 
         }
       },
       password: {
         type: Sequelize.STRING,
         allowNull: false,
         validate: {
-          len: [30]  // Minimum 30 caractères
+          len: [30]
         }
       },
       email: {
@@ -61,6 +61,11 @@ module.exports = {
           key: 'id'
         }
       },
+      points: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        defaultValue: 0,  // Les utilisateurs commencent avec 0 points par défaut
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
@@ -82,6 +87,7 @@ module.exports = {
       lastname: 'Admin',
       roleId: 2, 
       acceptedCGV: true,
+      points: 1000,  // L'administrateur commence avec 1000 points
     }]);
   },
   
