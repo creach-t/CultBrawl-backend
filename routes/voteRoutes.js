@@ -8,7 +8,7 @@ const {
   getBattleVoteStats,
   getUserVotes
 } = require('../controllers/votesController');
-const { authMiddleware } = require('../middlewares/authMiddleware');
+const { verifyToken } = require('../middlewares/authMiddleware');
 const { voteLimiter, generalLimiter } = require('../middlewares/rateLimiter');
 const { validatePagination } = require('../validations/voteValidation');
 
@@ -34,7 +34,7 @@ const validatePaginationMiddleware = (req, res, next) => {
 router.get('/stats/:battleId', generalLimiter, getBattleVoteStats);
 
 // Routes privées (authentification requise)
-router.use(authMiddleware);
+router.use(verifyToken);
 
 // CRUD des votes
 router.route('/')
