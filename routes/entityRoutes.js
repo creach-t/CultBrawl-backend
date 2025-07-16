@@ -1,12 +1,12 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const entityController = require('../controllers/entityController');
+const entityController = require("../controllers/entityController");
+const routeWrapper = require("../utils/routeWrapper"); // AJOUTEZ
 
-// Routes pour les entités
-router.post('/', entityController.addEntity);  // Ajouter une entité
-router.get('/', entityController.getAllEntities);  // Liste des entités
-router.get('/leaderboard', entityController.getTop5EntityByVotes);  // Liste des entités par points
-router.get('/:id', entityController.getEntityById);  // Détail d'une entité
-router.delete('/:id', entityController.deleteEntity);  // Suppression d'une entité
+router.post("/", routeWrapper(entityController.addEntity));
+router.get("/", routeWrapper(entityController.getAllEntities));
+router.get("/leaderboard", routeWrapper(entityController.getTop5EntityByVotes));
+router.get("/:id", routeWrapper(entityController.getEntityById));
+router.delete("/:id", routeWrapper(entityController.deleteEntity));
 
 module.exports = router;
