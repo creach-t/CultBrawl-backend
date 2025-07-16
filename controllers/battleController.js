@@ -52,7 +52,7 @@ async createBattle(req, res) {
     res.status(500).json({ message: 'Erreur serveur lors de la création de la bataille.' });
   }
 }
-,  
+,
 
   // Récupérer toutes les batailles
 async getAllBattles(req, res) {
@@ -162,18 +162,18 @@ async getAllBattles(req, res) {
           { model: Entity, as: 'Entity2' },
         ],
       });
-  
+
       if (!battle) {
         return res.status(404).json({ message: 'Battle non trouvée.' });
       }
-  
+
       // Récupère les votes pour la bataille
       const votes = await Vote.findAll({ where: { battleId: id } });
-  
+
       // Compte les votes pour chaque entité
       const entity1Votes = votes.filter((vote) => vote.votedEntityId === battle.entity1Id).length;
       const entity2Votes = votes.filter((vote) => vote.votedEntityId === battle.entity2Id).length;
-  
+
       res.status(200).json({
         entity1Votes,
         entity2Votes,
@@ -188,24 +188,24 @@ async getAllBattles(req, res) {
     try {
       const { id } = req.params; // ID de la bataille
       const { votedEntityId } = req.body;
-  
+
       // Vérifier l'utilisateur depuis le token
       const decodedUser = extractUserFromToken(req);
-  
+
       const battle = await Battle.findByPk(id);
       if (!battle) {
         return res.status(404).json({ message: 'Bataille non trouvée.' });
       }
-  
+
       const entity = await Entity.findByPk(votedEntityId);
       if (!entity) {
         return res.status(404).json({ message: "L'entité n'existe pas." });
       }
-  
+
       if (battle.status !== 'pending') {
         return res.status(400).json({ message: 'La bataille est terminée ou annulée.' });
       }
-  
+
       // Vérifiez que l'utilisateur n'a pas déjà voté
       const existingVote = await Vote.findOne({
         where: {
@@ -213,37 +213,37 @@ async getAllBattles(req, res) {
           userId: decodedUser.id,
         },
       });
-  
+
       if (existingVote) {
         return res.status(400).json({ message: 'Vous avez déjà voté pour cette bataille.' });
       }
-  
+
       // Enregistrer le vote
       await Vote.create({
         battleId: id,
         userId: decodedUser.id,
         votedEntityId,
       });
-  
+
       res.status(200).json({ message: 'Vote enregistré avec succès.' });
     } catch (error) {
       console.error('Erreur lors du vote pour une entité:', error);
       res.status(500).json({ message: 'Erreur serveur lors du vote pour une entité.' });
     }
-  },  
+  },
 
   async getUserVote(req, res) {
     try {
       const { id } = req.params; // ID de la bataille
-  
+
       // Vérifier l'utilisateur depuis le token
       const decodedUser = extractUserFromToken(req);
-  
+
       const battle = await Battle.findByPk(id);
       if (!battle) {
         return res.status(404).json({ message: 'Bataille non trouvée.' });
       }
-  
+
       // Vérifiez si un vote existe pour cet utilisateur dans cette bataille
       const vote = await Vote.findOne({
         where: {
@@ -251,13 +251,13 @@ async getAllBattles(req, res) {
           userId: decodedUser.id,
         },
       });
-  
+
       res.status(200).json({ hasVoted: !!vote }); // Retourne true si l'utilisateur a voté, sinon false
     } catch (error) {
       console.error('Erreur lors de la vérification du vote utilisateur :', error);
       res.status(500).json({ message: 'Erreur serveur lors de la vérification du vote utilisateur.' });
     }
-  },  
+  },
 
 };
 module.exports = battleController;

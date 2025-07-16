@@ -61,12 +61,38 @@ module.exports = (sequelize, DataTypes) => {
           isInt: { msg: 'L\'ID de l\'entité votée doit être un entier.' },
         },
       },
+      createdAt: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: DataTypes.NOW,
+      },
+      updatedAt: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: DataTypes.NOW,
+      }
     },
     {
       sequelize,
       modelName: 'Vote',
-      timestamps: false,
+      timestamps: true,
       underscored: false,
+      indexes: [
+        {
+          unique: true,
+          fields: ['battleId', 'userId'],
+          name: 'unique_vote_per_battle_per_user'
+        },
+        {
+          fields: ['battleId']
+        },
+        {
+          fields: ['userId']
+        },
+        {
+          fields: ['votedEntityId']
+        }
+      ]
     }
   );
 
