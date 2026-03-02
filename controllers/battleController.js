@@ -197,13 +197,17 @@ async getAllBattles(req, res) {
         return res.status(404).json({ message: 'Bataille non trouvée.' });
       }
 
+      if (battle.status !== 'pending') {
+        return res.status(400).json({ message: 'La bataille est terminée ou annulée.' });
+      }
+
+      if (votedEntityId !== battle.entity1Id && votedEntityId !== battle.entity2Id) {
+        return res.status(400).json({ message: "L'entité votée n'appartient pas à cette bataille." });
+      }
+
       const entity = await Entity.findByPk(votedEntityId);
       if (!entity) {
         return res.status(404).json({ message: "L'entité n'existe pas." });
-      }
-
-      if (battle.status !== 'pending') {
-        return res.status(400).json({ message: 'La bataille est terminée ou annulée.' });
       }
 
       // Vérifiez que l'utilisateur n'a pas déjà voté
@@ -225,7 +229,13 @@ async getAllBattles(req, res) {
         votedEntityId,
       });
 
-      res.status(200).json({ message: 'Vote enregistré avec succès.' });
+      // Ajouter 500 points à l'utilisateur
+      const user = await User.findByPk(decodedUser.id);
+      if (user) {
+        await user.update({ points: user.points + 500 });
+      }
+
+      res.status(200).json({ message: 'Vote enregistré avec succès.', newPoints: user ? user.points : undefined });
     } catch (error) {
       console.error('Erreur lors du vote pour une entité:', error);
       res.status(500).json({ message: 'Erreur serveur lors du vote pour une entité.' });

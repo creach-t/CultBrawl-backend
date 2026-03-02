@@ -5,7 +5,7 @@ const { AppError } = require('../utils/AppError');
  * Rate limiter général pour toutes les routes
  */
 const generalLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
+  windowMs: 1 * 60 * 1000, // 1 minutes
   max: 100, // Limite de 100 requêtes par fenêtre de temps
   message: {
     success: false,

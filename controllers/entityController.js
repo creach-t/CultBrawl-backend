@@ -101,6 +101,25 @@ const getEntityById = async (req, res) => {
   }
 };
 
+// Mettre à jour une entité
+const updateEntity = async (req, res) => {
+  const { id } = req.params;
+  const { name, type, imageUrl, description } = req.body;
+
+  try {
+    const entity = await Entity.findByPk(id);
+    if (!entity) {
+      return res.status(404).json({ message: 'Entité non trouvée.' });
+    }
+
+    await entity.update({ name, type, imageUrl, description });
+    res.json({ message: 'Entité mise à jour.', entity });
+  } catch (error) {
+    console.error('Erreur lors de la mise à jour de l\'entité :', error);
+    res.status(500).json({ message: 'Erreur serveur.' });
+  }
+};
+
 // Supprimer une entité
 const deleteEntity = async (req, res) => {
   const { id } = req.params;
@@ -123,6 +142,7 @@ module.exports = {
   addEntity,
   getAllEntities,
   getEntityById,
+  updateEntity,
   deleteEntity,
   getTop5EntityByVotes,
 };
