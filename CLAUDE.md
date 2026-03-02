@@ -34,6 +34,8 @@ API REST Express/Sequelize pour une application de versus culturel. Les utilisat
 - Toutes les routes sont montées sous `/api` dans `app.js`
 - Auth : appliquer `verifyToken` avant les routes protégées
 - Rate limiting : `authLimiter` sur register/login, `voteLimiter` sur les endpoints de vote
+- Admin : appliquer `isAdmin` (après `verifyToken`) pour restreindre aux rôles `roleId === 2`
+- Accès battle : `verifyBattleAccess` vérifie que l'utilisateur est le créateur OU admin
 
 ---
 
@@ -81,12 +83,21 @@ Battle.belongsTo(User,   { as: 'Creator' })
 
 ---
 
+## Scripts utilitaires
+
+```bash
+node scripts/resetAdminPassword.js   # Remet le mot de passe admin à "Admin1234!"
+```
+
+---
+
 ## Problèmes connus (ne pas "corriger" sans discussion)
 
 - CORS hardcodé dans `app.js` (IPs de dev local) → prévu pour le dev
 - JWT sans refresh token → comportement voulu pour l'instant
 - `VersusProposal` : modèle incomplet, à ignorer
 - `uploadController.js` : pas d'auth sur la route upload, pas de nettoyage des anciens fichiers
+- Le gagnant d'une bataille n'est pas déterminé automatiquement à l'expiration (`updateExpiredBattles` met seulement `status=completed`)
 
 ---
 
