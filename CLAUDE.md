@@ -83,14 +83,6 @@ Battle.belongsTo(User,   { as: 'Creator' })
 
 ---
 
-## Scripts utilitaires
-
-```bash
-node scripts/resetAdminPassword.js   # Remet le mot de passe admin à "Admin1234!"
-```
-
----
-
 ## Problèmes connus (ne pas "corriger" sans discussion)
 
 - CORS hardcodé dans `app.js` (IPs de dev local) → prévu pour le dev
